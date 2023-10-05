@@ -1,9 +1,19 @@
-const inputs = document.querySelectorAll('.controls input');
+const video = document.querySelector('.flex');
+const speedBar = document.querySelector('.speed-bar');
+let isMouseDown = false;
 
-    function handleUpdate() {
-      const suffix = this.dataset.sizing || '';
-      document.documentElement.style.setProperty(`--${this.name}`, this.value + suffix);
-    }
+function handleSpeedScrub(e) {
+  if (!isMouseDown) return;
+  const scrubY = e.pageY - this.offsetTop;
+  const percent = scrubY / this.offsetHeight;
+  const min = 0.4;
+  const max = 4;
+  const playbackRate = percent * (max - min) + min;
+  speedBar.textContent = `${playbackRate.toFixed(1)}x`;
+  video.playbackRate = playbackRate;
+}
 
-    inputs.forEach(input => input.addEventListener('change', handleUpdate));
-    inputs.forEach(input => input.addEventListener('mousemove', handleUpdate));
+speedBar.addEventListener('mousedown', () => isMouseDown = true);
+speedBar.addEventListener('mouseup', () => isMouseDown = false);
+speedBar.addEventListener('mouseleave', () => isMouseDown = false);
+speedBar.addEventListener('mousemove', handleSpeedScrub);
